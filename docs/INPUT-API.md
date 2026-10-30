@@ -16,6 +16,7 @@ API; the provider additionally pushes key events.
 | POST   | `/api/keyboard/blur`     | Blur an input → auto-hide if no focus     |
 | POST   | `/api/keyboard/key`      | Inject a key/char (provider echo / HW)    |
 | GET    | `/api/keyboard/state`    | Full current state                        |
+| GET    | `/api/keyboard/render`   | Active provider's drawing spec            |
 | GET    | `/api/keyboard/providers`| List providers + capabilities             |
 | POST   | `/api/keyboard/provider` | Switch active provider                    |
 
@@ -96,6 +97,27 @@ Control tokens (case-insensitive):
 
 ### `GET /api/keyboard/state`
 Returns the full `state` object.
+
+### `GET /api/keyboard/render`
+Returns the active provider's drawing specification (side-effect free), so a host
+can paint exactly what the provider would without re-deriving it from state.
+
+```json
+{
+  "provider": "stub",
+  "render": {
+    "layout": "text",
+    "inputMode": "touch",
+    "value": "",
+    "placeholder": "Search",
+    "secure": false,
+    "capabilities": ["Touch"],
+    "theme": "dark",
+    "visible": true,
+    "focusedInput": ""
+  }
+}
+```
 
 ### `GET /api/keyboard/providers`
 ```json

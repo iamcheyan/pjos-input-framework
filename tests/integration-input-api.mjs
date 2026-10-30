@@ -115,14 +115,22 @@ try {
   const blurred = await pjos.blur("settings-ssid");
   check("blur auto-hides the keyboard", blurred.visible === false);
 
-  // 7. Provider Manager reports the stub provider for a headless host.
+  // 7. The provider contract's Render is reachable over the API.
+  const rendered = await client.render();
+  check(
+    "active provider exposes a render spec",
+    rendered.provider === "stub" && typeof rendered.render.layout === "string",
+    JSON.stringify(rendered.render).slice(0, 80),
+  );
+
+  // 8. Provider Manager reports the stub provider for a headless host.
   const providers = await client.providers();
   check(
     "active provider is discoverable",
     providers.active === "stub" && providers.providers.some((p) => p.name === "stub"),
   );
 
-  // 8. Unknown provider is not silently accepted.
+  // 9. Unknown provider is not silently accepted.
   let unknownRejected = false;
   try {
     await client.setProvider("does-not-exist");
@@ -131,7 +139,7 @@ try {
   }
   check("unknown provider rejected with 404", unknownRejected);
 
-  // 9. CORS: the provider runs on another origin.
+  // 10. CORS: the provider runs on another origin.
   const preflight = await fetch(`${baseUrl}/api/keyboard/key`, {
     method: "OPTIONS",
     headers: {

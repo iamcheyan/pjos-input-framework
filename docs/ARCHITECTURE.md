@@ -83,6 +83,24 @@ device string:
 exposes it in `State.inputMode` so the frontend renders the right mode without
 re-deriving device facts.
 
+## Provider contract
+
+```go
+type KeyboardProvider interface {
+    Name() string
+    Capabilities() []Capability
+    Show(req ShowRequest, st State) RenderSpec
+    Hide(st State)
+    Render(st State) RenderSpec   // side-effect free drawing spec
+    Submit(value string, st State)
+}
+```
+
+`Render` returns a `RenderSpec` instead of touching a display, so providers that
+have no surface (the stub, a headless host) still satisfy the contract. The
+Manager also emits `OnShow`/`OnHide`/`OnKey`/`OnSubmit` notifications around those
+calls. `GET /api/keyboard/render` exposes the active provider's spec.
+
 ## State
 
 `keyboardd` is the single source of truth for:
